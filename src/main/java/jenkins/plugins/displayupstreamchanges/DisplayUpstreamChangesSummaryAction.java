@@ -23,101 +23,74 @@
  */
 package jenkins.plugins.displayupstreamchanges;
 
-import hudson.model.*;
+import hudson.model.Action;
+import hudson.model.TopLevelItem;
+import hudson.model.AbstractBuild;
+import hudson.model.AbstractProject;
+import hudson.model.Cause;
+import hudson.model.Run;
 import hudson.scm.ChangeLogSet;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
-//@ExportedBean(defaultVisibility=2)
+import jenkins.model.Jenkins;
+
 public class DisplayUpstreamChangesSummaryAction implements Action {
+    @SuppressWarnings("rawtypes")
     private AbstractBuild build;
-    
+
+    @SuppressWarnings("rawtypes")
     public DisplayUpstreamChangesSummaryAction(AbstractBuild build) {
         this.build = build;
     }
-    
+
     /* Action methods */
     public String getUrlName() { return ""; }
     public String getDisplayName() { return ""; }
     public String getIconFileName() { return null; }
-    
-    public static class UpstreamChangeLog {
-        private ChangeLogSet changeLogSet;
-        private AbstractBuild build;
 
-        public UpstreamChangeLog(ChangeLogSet changeLogSet, AbstractBuild build) {
-            this.changeLogSet = changeLogSet;
-            this.build = build;
-        }
-
-        public AbstractBuild getBuild() {
-            return build;
-        }
-
-        public void setBuild(AbstractBuild build) {
-            this.build = build;
-        }
-
-        public ChangeLogSet getChangeLogSet() {
-            return changeLogSet;
-        }
-
-        public void setChangeLogSet(ChangeLogSet changeLogSet) {
-            this.changeLogSet = changeLogSet;
-        }
-        
-        public String getDisplayName() {
-            return build.getProject().getDisplayName() + " " + build.getDisplayName();
-        }
-        
-        public String getAbsoluteBuildUrl() {
-            return Hudson.getInstance().getRootUrl() + "/" + build.getUrl();
-        }
-        
-        public String getSCMDisplayName() {
-            return build.getProject().getScm().getDescriptor().getDisplayName();
-        }
-        
-    }
-    
-    public List<UpstreamChangeLog> getUpstreamChangeLogs(){
+    @SuppressWarnings("rawtypes")
+    public List<UpstreamChangeLog> getUpstreamChangeLogs() {
         List<UpstreamChangeLog> upstreamChangeLogs = new ArrayList<UpstreamChangeLog>();
         List<ChangeLogSet> changeLogSets = new ArrayList<ChangeLogSet>();
-        //Get upstream builds from fingerprinting
+        // Get upstream builds from fingerprinting
+        @SuppressWarnings("unchecked")
         Map<AbstractProject<?,?>,Integer> transitiveUpstreamBuilds = build.getTransitiveUpstreamBuilds();
-        for(Entry<AbstractProject<?,?>,Integer> e : transitiveUpstreamBuilds.entrySet()){
+        for (Entry<AbstractProject<?,?>,Integer> e : transitiveUpstreamBuilds.entrySet()) {
             AbstractBuild<?,?> run = e.getKey().getBuildByNumber(e.getValue());
             if (run.hasChangeSetComputed()) {
                 ChangeLogSet<?> cls = run.getChangeSet();
-                if (cls != null) {
+                if (cls != null && !cls.isEmptySet()) {
                     changeLogSets.add(cls);
                     upstreamChangeLogs.add(new UpstreamChangeLog(cls, run));
                 }
             }
         }
-        //Upstream builds via cause
+
+        // Upstream builds via cause
         List<AbstractBuild> upstreamBuilds = new ArrayList<AbstractBuild>();
         getAllUpstreamByCause(this.build, upstreamBuilds);
-        for(AbstractBuild build : upstreamBuilds) {
-            if(build.hasChangeSetComputed()){
+        for (AbstractBuild build : upstreamBuilds) {
+            if (build.hasChangeSetComputed()) {
                 ChangeLogSet cls = build.getChangeSet();
-                if(!changeLogSets.contains(cls)){
+                if (!changeLogSets.contains(cls) && !cls.isEmptySet()) {
                     changeLogSets.add(cls);
                     upstreamChangeLogs.add(new UpstreamChangeLog(cls, build));
                 }
             }
         }
-        
+
         return upstreamChangeLogs;
     }
 
+    @SuppressWarnings("rawtypes")
     private static void getAllUpstreamByCause(AbstractBuild build, List<AbstractBuild> list) {
-        for(AbstractBuild upstreamBuild : getUpstreamByCause(build)) {
+        for (AbstractBuild upstreamBuild : getUpstreamByCause(build)) {
             //Duplication and cycle protection
-            if(list.contains(upstreamBuild)){
+            if (list.contains(upstreamBuild)) {
                 continue;
             } else {
                 list.add(upstreamBuild);
@@ -127,15 +100,16 @@ public class DisplayUpstreamChangesSummaryAction implements Action {
         return;
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     private static List<AbstractBuild> getUpstreamByCause(AbstractBuild build) {
         List<AbstractBuild> upstreamBuilds = new ArrayList<AbstractBuild>();
-        for(Cause cause: (List<Cause>) build.getCauses()){
-            if(cause instanceof Cause.UpstreamCause) {
-                TopLevelItem upstreamProject = Hudson.getInstance().getItemByFullName(((Cause.UpstreamCause)cause).getUpstreamProject(), TopLevelItem.class);
-                if(upstreamProject instanceof AbstractProject){
+        for (Cause cause: (List<Cause>) build.getCauses()) {
+            if (cause instanceof Cause.UpstreamCause) {
+                TopLevelItem upstreamProject = Jenkins.getInstance().getItemByFullName(((Cause.UpstreamCause)cause).getUpstreamProject(), TopLevelItem.class);
+                if (upstreamProject instanceof AbstractProject) {
                     int buildId = ((Cause.UpstreamCause)cause).getUpstreamBuild();
                     Run run = ((AbstractProject) upstreamProject).getBuildByNumber(buildId);
-                    if(run instanceof AbstractBuild){
+                    if (run instanceof AbstractBuild) {
                         upstreamBuilds.add((AbstractBuild) run);
                     }
                 }
@@ -143,5 +117,5 @@ public class DisplayUpstreamChangesSummaryAction implements Action {
         }
         return upstreamBuilds;
     }
-    
+
 }

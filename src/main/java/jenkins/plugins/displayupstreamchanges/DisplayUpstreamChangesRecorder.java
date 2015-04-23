@@ -30,14 +30,15 @@ import hudson.model.Action;
 import hudson.model.BuildListener;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Recorder;
+
 import java.io.IOException;
 import java.util.logging.Logger;
+
 import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
  * This class associates {@link DisplayUpstreamChangesAction}s to a build.
  */
-@SuppressWarnings("unchecked")
 public class DisplayUpstreamChangesRecorder extends Recorder {
 
     private static final Logger LOGGER = Logger.getLogger(DisplayUpstreamChangesRecorder.class.getName());
@@ -66,4 +67,5 @@ public class DisplayUpstreamChangesRecorder extends Recorder {
     public final BuildStepMonitor getRequiredMonitorService() {
         return BuildStepMonitor.NONE;
     }
+
 }

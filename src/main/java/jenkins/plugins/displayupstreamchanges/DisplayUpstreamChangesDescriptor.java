@@ -28,13 +28,15 @@ import hudson.model.AbstractProject;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Publisher;
 import net.sf.json.JSONObject;
+
 import org.kohsuke.stapler.StaplerRequest;
 
 @Extension
-public class DisplayUpstreamChangesDescriptor extends BuildStepDescriptor<Publisher> {
+public final class DisplayUpstreamChangesDescriptor extends BuildStepDescriptor<Publisher> {
 
-	private boolean enableSecurity = false;
-	
+    private static final String DISPLAY_UPSTREAM_CHANGES = "Display Upstream Changes";
+    private static final String PLUGIN_DISPLAY_HTML = "/plugin/display-upstream-changes/help-enableForAll.html";
+
     /**
      * Constructs a {@link DisplayUpstreamChangesDescriptor}.
      */
@@ -48,30 +50,29 @@ public class DisplayUpstreamChangesDescriptor extends BuildStepDescriptor<Publis
      */
     @Override
     public final String getDisplayName() {
-        return "Display Upstream Changes";
+        return DISPLAY_UPSTREAM_CHANGES;
     }
 
     @Override
     public String getHelpFile() {
-        return "/plugin/display-upstream-changes/projectconfig.html";
+        return PLUGIN_DISPLAY_HTML;
     }
-    
+
     /**
      * Checks whether this descriptor is applicable.
      * @param clazz
      *            the class
      * @return true
      */
-    @SuppressWarnings("unchecked")
-	@Override
-    public final boolean isApplicable(final Class<? extends AbstractProject> clazz) {
+    @Override
+    public final boolean isApplicable(@SuppressWarnings("rawtypes") final Class<? extends AbstractProject> clazz) {
         return true;
     }
-    
+
     @Override
     public boolean configure(StaplerRequest req, JSONObject formData) throws FormException {
         save();
         return super.configure(req,formData);
     }
-    
+
 }

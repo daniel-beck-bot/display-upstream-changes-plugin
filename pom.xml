@@ -1,10 +1,5 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>org.jenkins-ci.plugins</groupId>
-    <artifactId>plugin</artifactId>
-    <version>1.424</version>
-  </parent>
+    <modelVersion>4.0.0</modelVersion>
 
     <name>Display Upstream Changes</name>
     <groupId>org.jvnet.hudson.plugins</groupId>
@@ -13,25 +8,31 @@
     <packaging>hpi</packaging>
     <url>http://wiki.jenkins-ci.org/display/JENKINS/Display+Upstream+Changes+Plugin</url>
 
+    <parent>
+        <groupId>org.jenkins-ci.plugins</groupId>
+        <artifactId>plugin</artifactId>
+        <version>1.565</version>
+    </parent>
+
     <developers>
       <developer>
         <id>rpetti</id>
         <name>Rob Petti</name>
       </developer>
     </developers>
-    
-  <scm>
-    <connection>scm:git:git://github.com/jenkinsci/display-upstream-changes-plugin.git</connection>
-    <developerConnection>scm:git:ssh://git@github.com/jenkinsci/display-upstream-changes-plugin.git</developerConnection>
-    <url>https://github.com/jenkinsci/display-upstream-changes-plugin</url>
-  </scm>
 
-  <repositories>
-    <repository>
-      <id>repo.jenkins-ci.org</id>
-      <url>http://repo.jenkins-ci.org/public/</url>
-    </repository>
-  </repositories>  
+    <scm>
+      <connection>scm:git:git://github.com/jenkinsci/display-upstream-changes-plugin.git</connection>
+      <developerConnection>scm:git:ssh://git@github.com/jenkinsci/display-upstream-changes-plugin.git</developerConnection>
+      <url>https://github.com/jenkinsci/display-upstream-changes-plugin</url>
+    </scm>
+
+    <repositories>
+      <repository>
+        <id>repo.jenkins-ci.org</id>
+        <url>http://repo.jenkins-ci.org/public/</url>
+      </repository>
+    </repositories>  
 
     <pluginRepositories>
         <pluginRepository>
@@ -39,5 +40,6 @@
             <url>http://repo.jenkins-ci.org/public/</url>
         </pluginRepository>
     </pluginRepositories>
+
 </project>  
 
