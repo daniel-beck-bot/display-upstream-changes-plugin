@@ -22,13 +22,38 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 -->
 
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt">
   <t:summary icon="notepad.png">
     ${%Upstream Changes}
     <ul>
     <j:forEach var="upstreamChangeLog" items="${it.getUpstreamChangeLogs()}">
-      <li><a href="${upstreamChangeLog.getAbsoluteBuildUrl()}">${upstreamChangeLog.getDisplayName()}</a> -- <i>${upstreamChangeLog.getSCMDisplayName()}</i><br/>
-      <st:include it="${upstreamChangeLog.getChangeLogSet()}" page="digest.jelly" />
+      <li><a href="${upstreamChangeLog.getAbsoluteBuildUrl()}">${upstreamChangeLog.getDisplayName()} (<i:formatDate value="${upstreamChangeLog.build.timestamp.time}" type="both" dateStyle="medium" timeStyle="medium"/>)</a> -- <i>${upstreamChangeLog.getSCMDisplayName()}</i><br/>
+
+        <j:set var="upstream" value="${upstreamChangeLog.getChangeLogSet()}"/>
+        <j:set var="browser" value="${it.build.project.scm.effectiveBrowser}"/>
+
+          <j:choose>
+            <j:when test="${upstream.emptySet}">
+              No changes.
+            </j:when>
+            <j:otherwise>
+              <ol>
+                <j:forEach var="cs" items="${upstream.logs}" varStatus="loop">
+                  <li>
+                    <j:out value="${cs.msgAnnotated}"/>
+                    (<a href="${upstreamChangeLog.getAbsoluteBuildUrl()}changes#detail${loop.index}">detail</a>
+                    <j:set var="cslink" value="${browser.getChangeSetLink(cs)}"/>
+                    <j:if test="${cslink!=null}">
+                      <j:text> / </j:text>
+                      <a href="${cslink}">${browser.descriptor.displayName}</a>
+                    </j:if>
+                    <j:text>)</j:text>
+                  </li>
+                </j:forEach>
+              </ol>
+            </j:otherwise>
+          </j:choose>
+  
       </li>
     </j:forEach>
     </ul>
