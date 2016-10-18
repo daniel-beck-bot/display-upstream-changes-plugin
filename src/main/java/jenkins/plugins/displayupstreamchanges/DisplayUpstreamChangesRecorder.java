@@ -37,7 +37,7 @@ import java.util.logging.Logger;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
- * This class associates {@link DisplayUpstreamChangesAction}s to a build.
+ * This class associates {@link DisplayUpstreamChangesSummaryAction}s to a build.
  */
 public class DisplayUpstreamChangesRecorder extends Recorder {
 
