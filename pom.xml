@@ -4,7 +4,7 @@
     <name>Display Upstream Changes</name>
     <groupId>org.jvnet.hudson.plugins</groupId>
     <artifactId>display-upstream-changes</artifactId>
-    <version>0.3.2-SNAPSHOT</version>
+    <version>0.3.2</version>
     <packaging>hpi</packaging>
     <url>http://wiki.jenkins-ci.org/display/JENKINS/Display+Upstream+Changes+Plugin</url>
 
@@ -30,7 +30,8 @@
       <connection>scm:git:git://github.com/jenkinsci/display-upstream-changes-plugin.git</connection>
       <developerConnection>scm:git:ssh://git@github.com/jenkinsci/display-upstream-changes-plugin.git</developerConnection>
       <url>https://github.com/jenkinsci/display-upstream-changes-plugin</url>
-    </scm>
+      <tag>display-upstream-changes-0.3.2</tag>
+  </scm>
 
     <repositories>
       <repository>
