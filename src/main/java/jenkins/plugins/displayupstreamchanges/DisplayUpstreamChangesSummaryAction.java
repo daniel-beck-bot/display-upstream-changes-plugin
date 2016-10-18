@@ -105,13 +105,15 @@ public class DisplayUpstreamChangesSummaryAction implements Action {
         List<AbstractBuild> upstreamBuilds = new ArrayList<AbstractBuild>();
         for (Cause cause: (List<Cause>) build.getCauses()) {
             if (cause instanceof Cause.UpstreamCause) {
-                TopLevelItem upstreamProject = Jenkins.getInstance().getItemByFullName(((Cause.UpstreamCause)cause).getUpstreamProject(), TopLevelItem.class);
+                TopLevelItem upstreamProject = null;
+                jenkins.model.Jenkins instance = Jenkins.getInstance();
+                if (instance != null) {
+                    upstreamProject = instance.getItemByFullName(((Cause.UpstreamCause)cause).getUpstreamProject(), TopLevelItem.class);
+                }
                 if (upstreamProject instanceof AbstractProject) {
                     int buildId = ((Cause.UpstreamCause)cause).getUpstreamBuild();
                     Run run = ((AbstractProject) upstreamProject).getBuildByNumber(buildId);
-                    if (run instanceof AbstractBuild) {
-                        upstreamBuilds.add((AbstractBuild) run);
-                    }
+                    upstreamBuilds.add((AbstractBuild) run);
                 }
             }
         }

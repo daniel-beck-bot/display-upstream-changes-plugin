@@ -36,7 +36,12 @@ public class UpstreamChangeLog {
     }
 
     public String getAbsoluteBuildUrl() {
-        return Jenkins.getInstance().getRootUrl() + "/" + build.getUrl();
+        Jenkins instance = Jenkins.getInstance();
+        if (instance != null) {
+            return instance.getRootUrl() + "/" + build.getUrl();
+        } else {
+            return "/" + build.getUrl(); //should never happen
+        }
     }
 
     public String getSCMDisplayName() {
